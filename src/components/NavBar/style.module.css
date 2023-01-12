@@ -1,7 +1,7 @@
 .nav {
     position: absolute;
     color: white;
-    width: 100vw; height: 20vh;
+    width: 100vw; height: 18vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -10,8 +10,12 @@
     letter-spacing: 1px;
     z-index: 3;
     position: fixed;
-    background: linear-gradient(black, rgba(0,0,0,0));
+    background: linear-gradient(black, transparent);
     text-shadow: 1px 1px 5px black;
+    transition: .1s ease-in;
+}
+.nav:hover {
+    background-color: black;
 }
 .nav .logo {
     margin-left: 10%;

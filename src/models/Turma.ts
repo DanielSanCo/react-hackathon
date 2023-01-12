@@ -1,10 +1,10 @@
-//import GrupoPi from "./Grupopi"
+import GrupoPi from "./Grupopi"
 
 interface Turma {
     id: number
     descricao: string
     isAtivo: boolean
-    //grupoPi: GrupoPi
+    grupoPi?: GrupoPi
 }
 
 export default Turma;

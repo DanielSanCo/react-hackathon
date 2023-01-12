@@ -1,12 +1,12 @@
-//import Turma from "./Turma";
-//import Projeto from "./Projeto";
+import Turma from "./Turma";
+import Projeto from "./Projeto";
 
 interface GrupoPi {
     id: number
     numeroGrupo: string
     maisInfos: string
-    //turma: Turma
-    //projeto: Projeto
+    turma?: Turma
+    projeto?: Projeto
 }
 
 export default GrupoPi;

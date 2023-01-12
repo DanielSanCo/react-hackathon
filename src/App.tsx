@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Projeto from './models/Projeto';
-import {api} from './services/service';
+import { api } from './services/service';
+import axios from 'axios';
+import GrupoPi from './models/Grupopi';
+import Turma from './models/Turma';
 //import Projetos from './components/projetos';
 
 const listProjects = [
@@ -16,19 +19,63 @@ const listProjects = [
 
 function App() {
 
-  const [value, setValue] = useState('')
+  const [valueTurma, setValueTurma] = useState('')
+  const [valueGrupo, setValueGrupo] = useState('')
+  const [valueNomeProjeto, setValueNomeProjeto] = useState('')
   const [displayB, setDisplayB] = useState('none')
   const [displayCa, setDisplayCa] = useState('none')
 
-  const [projetos, setProjetos] = useState<Projeto[]>([])
+  const [nomeGrupo, setNomeGrupo] = useState('')
 
-  const Ca = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-    if (value === 'AADGLRY') {
-      setDisplayB('block')
-    } else {
-      setDisplayB('none')
+  const [projetos, setProjetos] = useState<Projeto[]>([])
+  const [turmas, setTurmas] = useState<Turma[]>([])
+
+  const NomeTurma = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValueTurma(e.target.value)
+  }
+  const NumeroGrupo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValueGrupo(e.target.value)
+  }
+  const NomeProjeto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValueNomeProjeto(e.target.value)
+  }
+
+
+  useEffect(() => {
+    getData()
+  }, [])
+  useEffect(() => {
+    getData2()
+  }, [])
+
+  async function getData() {
+    try {
+      const response = await fetch("https://gen-projetos.onrender.com/projetos")
+      const data = await response.json()
+      setProjetos(data)
+      console.log(data)
+      return data;
+    } catch (err) {
+      console.log("error")
+      return err
     }
+  }
+
+  async function getData2() {
+    try {
+      const response = await fetch("https://gen-projetos.onrender.com/turmas")
+      const data = await response.json()
+      setTurmas(data)
+      console.log(data)
+      return data;
+    } catch (err) {
+      console.log("error")
+      return err
+    }
+  }
+
+  const showNumber = () => {
+    console.log('olá mundo')
   }
 
   return (
@@ -47,31 +94,57 @@ function App() {
         <div className='nullPage'></div>
         <div className='projectArea'>
           <div className='inputArea'>
-            <input type="text" placeholder='Turma' value={value} onChange={Ca} />
-            <input type="text" placeholder='Grupo' />
-            <input type="text" placeholder='Nome Projeto' />
-            {/* <button
-              //style={{display: displayB}} 
-              onClick={() => displayCa === 'none' ? setDisplayCa('flex') : setDisplayCa('none')}
-            >Cadastrar Projeto</button> */}
+            <div className='divInput'>
+              <input type="text" placeholder='Turma' value={valueTurma} onChange={NomeTurma} />
+              <div>
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149852.png" alt="" />
+              </div>
+            </div>
+            <div className='divInput'>
+              <input type="text" placeholder='Grupo' value={valueGrupo} onChange={NumeroGrupo} />
+              <div>
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149852.png" alt="" />
+              </div>
+            </div>
+            <div className='divInput'>
+              <input type="text" placeholder='Nome do Projeto' value={valueNomeProjeto} onChange={NomeProjeto} />
+              <div>
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149852.png" alt="" />
+              </div>
+            </div>
           </div>
           <div className='listProject'>
-            olá
-            {projetos.map((item, index) => (
-              <div key={index} className="eachProject">
-                {item.nomeProjeto}
-              </div>
-            ))}
+
+            {
+              projetos.map((item, index) => (
+                valueTurma === '' && valueGrupo === '' && valueNomeProjeto === '' || valueTurma === item.grupoPi?.turma?.descricao || valueGrupo === item.grupoPi?.numeroGrupo || valueNomeProjeto === item.nomeProjeto ?
+                  <div key={index} className="eachProject">
+                    {turmas.map((item, key) => (
+                      <>
+                        {item.grupoPi?.numeroGrupo === nomeGrupo && item.grupoPi?.numeroGrupo !== '' ?
+                          <div>{item.descricao}</div>
+                          :
+                          ''
+                        }
+                      </>
+                    ))}
+                    <div>{item.grupoPi?.numeroGrupo}</div>
+                    <div className='logoProjeto'>
+                      <img src={item.logoProjeto} alt="" />
+                    </div>
+                    <div className='imgProjeto'>
+                      Imagem do Projeto
+                    </div>
+                    <h4>{item.nomeProjeto}</h4>
+                    <a href={item.linkProjeto} target="_blank">Abrir projeto</a>
+                  </div>
+                  :
+                  <div className='error'>Projeto(s) Não encontrado</div>
+              ))
+            }
           </div>
         </div>
       </div>
-
-      {/* <div className='cadastrarProjeto' style={{ display: displayCa }}>
-        <div className="closeForm">
-          <div onClick={() => displayCa === 'none' ? setDisplayCa('flex') : setDisplayCa('none')}>X</div>
-        </div>
-        <Projetos />
-      </div> */}
 
       <Footer />
 
